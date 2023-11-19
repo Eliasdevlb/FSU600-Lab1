@@ -1,0 +1,36 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v8.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v8.0": {
+      "FUS600-LAB1/1.0.0": {
+        "dependencies": {
+          "algorithms": "1.0.0"
+        },
+        "runtime": {
+          "FUS600-LAB1.dll": {}
+        }
+      },
+      "algorithms/1.0.0": {
+        "runtime": {
+          "algorithms.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "FUS600-LAB1/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "algorithms/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

@@ -1,0 +1,6 @@
+David Wilson|Sales|3                                            
+Mark Sommers|Programming|5                                               
+Christian Mann|Administration|10                                             
+Salem Hassan|programming|4
+Susan Gaber|Administration|20                                               
+William Wilson|Sales|7

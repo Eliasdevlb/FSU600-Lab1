@@ -1,0 +1,6 @@
+C:\Users\R\source\repos\FUS600-LAB1\algorithms\bin\Debug\algorithms.dll
+C:\Users\R\source\repos\FUS600-LAB1\algorithms\bin\Debug\algorithms.pdb
+C:\Users\R\source\repos\FUS600-LAB1\algorithms\obj\Debug\algorithms.csproj.AssemblyReference.cache
+C:\Users\R\source\repos\FUS600-LAB1\algorithms\obj\Debug\algorithms.csproj.CoreCompileInputs.cache
+C:\Users\R\source\repos\FUS600-LAB1\algorithms\obj\Debug\algorithms.dll
+C:\Users\R\source\repos\FUS600-LAB1\algorithms\obj\Debug\algorithms.pdb
