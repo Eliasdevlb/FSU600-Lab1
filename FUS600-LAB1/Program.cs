@@ -1,258 +1,289 @@
-﻿using System;
+﻿using System.Diagnostics;
 using algorithms;
-using System.Diagnostics;
 using FUS600_LAB1;
 
 class Program
 {
-    private static bool useAsync;
-
-    static async Task Main()
+    static async Task Main(string[] args)
     {
-
         Console.WriteLine("Select mode of operation:");
         Console.WriteLine("1. Asynchronous");
         Console.WriteLine("2. Synchronous");
 
-        useAsync = Convert.ToInt32(Console.ReadLine()) == 1;
+        bool useAsync = Console.ReadLine() == "1";
 
         while (true)
         {
-            Console.WriteLine("Select an operation:");
-            Console.WriteLine("1. Bubble Sort");
-            Console.WriteLine("2. Insertion Sort");
-            Console.WriteLine("3. Selection Sort");
-            Console.WriteLine("4. Merge Sort");
-            Console.WriteLine("5. Quick Sort");
-            Console.WriteLine("6. Sort By Lambda");
-            Console.WriteLine("7. Linear Search");
-            Console.WriteLine("8. Binary Search");
-            Console.WriteLine("9. Run Automated Performance Test");
-            Console.WriteLine("10. Run Automated Search Test");
-            Console.WriteLine("11 Process Employees File");
-            Console.WriteLine("12. Exit");
-
-            if (!int.TryParse(Console.ReadLine(), out int choice) || choice < 1 || choice > 11)
+            int choice = await ShowMenu();
+            if (choice == 12)
             {
-                Console.WriteLine("Invalid input. Please enter a number between 1 and 12.");
-                continue;
+                break; // Exit the loop and end the program
             }
 
-            switch (choice)
-            {
-                case 1:
-                case 2:
-                case 3:
-                case 4:
-                case 5:
-                case 6:
-                    await HandleSorting(choice);
-                    break;
-                case 7:
-                case 8:
-                    await HandleSearching(choice);
-                    break;
-                case 9:
-                    RunPerformanceTest();
-                    break;
-                case 10:
-                    RunSearchTest();
-                    break;
-                case 11:
-                    PerformEmployeeOperations();
-                    break;
-                case 12:
-                    Environment.Exit(0);
-                    break;
-                default:
-                    Console.WriteLine("Invalid selection. Please try again.");
-                    break;
-            }
+            int[] array = Algo.Prepare(100000); // Prepare an array for sorting/searching
+            int target = new Random().Next(0, 100000); // Random target for search operations
+
+            await PerformOperation(choice, array, target, useAsync);
         }
     }
 
-    static async Task HandleSorting(int choice)
+    static async Task<int> ShowMenu()
     {
-        SortingMethodDelegate sortMethod = GetSortingMethod(choice);
-        if (sortMethod == null)
+        Console.WriteLine("Select an operation:");
+        Console.WriteLine("1. Bubble Sort");
+        Console.WriteLine("2. Insertion Sort");
+        Console.WriteLine("3. Selection Sort");
+        Console.WriteLine("4. Merge Sort");
+        Console.WriteLine("5. Quick Sort");
+        Console.WriteLine("6. Sort By Lambda");
+        Console.WriteLine("7. Linear Search");
+        Console.WriteLine("8. Binary Search");
+        Console.WriteLine("9. Run Automated Performance Test");
+        Console.WriteLine("10. Run Automated Search Test");
+        Console.WriteLine("11. Process Employees File");
+        Console.WriteLine("12. Exit");
+
+        if (!int.TryParse(Console.ReadLine(), out int choice) || choice < 1 || choice > 12)
         {
-            Console.WriteLine("Invalid sorting selection.");
-            return;
+            Console.WriteLine("Invalid input. Please enter a number between 1 and 12.");
+            return await ShowMenu(); // Recursively call ShowMenu for invalid input.
         }
 
-        Console.WriteLine("Enter the size of the array:");
-        if (!int.TryParse(Console.ReadLine(), out int size) || size <= 0)
-        {
-            Console.WriteLine("Invalid input. Please enter a positive integer.");
-            return;
-        }
-
-        int[] array = algo.Prepare(size);
-        await DisplayRunningTime(array, (arr, _) => { sortMethod(arr); return 0; });
-
+        return choice;
     }
 
-    static async Task HandleSearching(int choice)
-    {
-        int[] array = algo.Prepare(100000);
-        algo.MergeSort(array); // Sorting the array before searching
-
-        Console.WriteLine("Enter the target value to search for:");
-        if (!int.TryParse(Console.ReadLine(), out int target))
-        {
-            Console.WriteLine("Invalid input. Please enter an integer.");
-            return;
-        }
-
-        SearchMethodDelegate searchMethod = choice == 7 ? algo.LinearSearch : algo.BinarySearch;
-        await DisplayRunningTime(array, (arr, _) => searchMethod(arr, target));
-    }
-
-    static SortingMethodDelegate GetSortingMethod(int choice)
+    static async Task PerformOperation(int choice, int[] array, int target, bool useAsync)
     {
         switch (choice)
         {
-            case 1: return algo.BubbleSort;
-            case 2: return algo.InsertionSort;
-            case 3: return algo.SelectionSort;
-            case 4: return algo.MergeSort;
-            case 5: return algo.QuickSort;
-            case 6: return array => { algo.SortByLambda(array); };
-            default:return array => { /* No operation */ };
+            case 1:
+                await HandleOperation(array, Algo.BubbleSort, "Bubble Sort", useAsync);
+                break;
+            case 2:
+                await HandleOperation(array, Algo.InsertionSort, "Insertion Sort", useAsync);
+                break;
+            case 3:
+                await HandleOperation(array, Algo.SelectionSort, "Selection Sort", useAsync);
+                break;
+            case 4:
+                await HandleOperation(array, Algo.MergeSort, "Merge Sort", useAsync);
+                break;
+            case 5:
+                await HandleOperation(array, Algo.QuickSort, "Quick Sort", useAsync);
+                break;
+            case 6:
+                await HandleOperation(array, arr => Algo.SortByLambda(arr), "Sort By Lambda", useAsync);
+                break;
+            case 7:
+                await HandleSearchOperation(array, num => Algo.LinearSearch(num, target), "Linear Search", useAsync);
+                break;
+            case 8:
+                await HandleSearchOperation(array, num => Algo.BinarySearch(num, target), "Binary Search", useAsync);
+                break;
+            case 9:
+                await RunAutomatedPerformanceTest(useAsync);
+                break;
+            case 10:
+                await RunSearchComparison(useAsync);
+                break;
+            case 11:
+                await ProcessEmployeesFile();
+                break;
         }
     }
 
-    static void RunPerformanceTest()
+    static async Task HandleOperation(int[] array, Action<int[]> operation, string description, bool useAsync)
     {
-        int[] sizes = { 100, 5000, 100000, 1000000 };
-        string[] algorithms = { "Insertion Sort", "Selection Sort", "Bubble Sort", "Merge Sort", "Quick Sort", "Using Lambda" };
-        SortingMethodDelegate[] methods = { algo.InsertionSort, algo.SelectionSort, algo.BubbleSort, algo.MergeSort, algo.QuickSort, array => { algo.SortByLambda(array); } };
+        var task = Algo.DisplayRunningTime(array, arr => { operation(arr); return (object)null; }, description);
 
-        // Print table header
-        Console.Write("{0,-16}", "Algorithm");
-        foreach (int size in sizes)
+        if (useAsync)
         {
-            Console.Write("{0,-15}", $"n={size}");
+            await task;
         }
-        Console.WriteLine();
-
-        for (int i = 0; i < algorithms.Length; i++)
+        else
         {
-            Console.Write("{0,-16}", algorithms[i]);
+            task.Wait(); // This will block until the task is completed
+        }
+    }
 
-            foreach (int size in sizes)
+    static async Task HandleSearchOperation(int[] array, Func<int[], int> searchOperation, string description, bool useAsync)
+    {
+        var task = Algo.DisplayRunningTime(array, arr => searchOperation(arr), description);
+
+        if (useAsync)
+        {
+            await task;
+        }
+        else
+        {
+            task.Wait(); // This will block until the task is completed
+        }
+    }
+
+    static async Task RunAutomatedPerformanceTest(bool useAsync)
+    {
+        var arraySizes = new int[] { 100, 5000, 100000, 1000000 };
+        var sortingAlgorithms = new Dictionary<string, Action<int[]>> {
+        { "Bubble Sort", Algo.BubbleSort },
+        { "Insertion Sort", Algo.InsertionSort },
+        { "Selection Sort", Algo.SelectionSort },
+        { "Merge Sort", Algo.MergeSort },
+        { "Quick Sort", Algo.QuickSort },
+        { "Sort By Lambda", arr => Algo.SortByLambda(arr) }
+    };
+
+        foreach (int size in arraySizes)
+        {
+            Console.WriteLine($"Performance for array size {size}:");
+            int[] testArray = Algo.Prepare(size);
+
+            var tasks = new List<Task>();
+            foreach (var algorithm in sortingAlgorithms)
             {
-                int[] array = algo.Prepare(size);
-                double durationMilliseconds = MeasureDuration(array, methods[i]);
-
-                Console.Write("{0,-15}", $"{durationMilliseconds:F2} ms");
+                int[] tempArray = (int[])testArray.Clone();
+                tasks.Add(RunSortAndDisplayAsync(tempArray, algorithm.Key, algorithm.Value, useAsync));
             }
-            Console.WriteLine();
+
+            await Task.WhenAll(tasks);
         }
     }
 
-    static void RunSearchTest()
-    {
-        int[] array = algo.Prepare(100000);
-        algo.MergeSort(array); 
-
-        int firstElement = array[0];
-        int middleElement = array[array.Length / 2];
-        int lastElement = array[array.Length - 1];
-
-        Console.WriteLine("{0,-15} {1,-15} {2,-15} {3,-15}", "", "Best case", "Average case", "Worst case");
-
-        Console.Write("{0,-15} ", "Linear Search");
-        PrintSearchTimes(array, firstElement, middleElement, lastElement, algo.LinearSearch);
-
-        Console.Write("{0,-15} ", "Binary Search");
-        PrintSearchTimes(array, firstElement, middleElement, lastElement, algo.BinarySearch);
-
-        Console.Write("{0,-15} ", "Using Lambda");
-        PrintSearchTimes(array, firstElement, middleElement, lastElement, (arr, target) => algo.SortByLambda(arr).ToList().IndexOf(target));
-    }
-
-    static void PrintSearchTimes(int[] array, int firstElement, int middleElement, int lastElement, SearchMethodDelegate searchMethod)
-    {
-        Console.Write("{0,-15} ", MeasureSearchTime(array, firstElement, searchMethod));
-        Console.Write("{0,-15} ", MeasureSearchTime(array, middleElement, searchMethod));
-        Console.WriteLine("{0,-15} ", MeasureSearchTime(array, lastElement, searchMethod));
-    }
-
-    static double MeasureSearchTime(int[] array, int target, SearchMethodDelegate searchMethod)
+    static async Task RunSortAndDisplayAsync(int[] array, string algorithmName, Action<int[]> sortingAlgorithm, bool useAsync)
     {
         Stopwatch stopwatch = new Stopwatch();
         stopwatch.Start();
-        searchMethod(array, target);
+
+        if (useAsync)
+        {
+            await Task.Run(() => sortingAlgorithm(array));
+        }
+        else
+        {
+            sortingAlgorithm(array);
+        }
+
         stopwatch.Stop();
-        return stopwatch.Elapsed.TotalMilliseconds;
+        Console.WriteLine($"{algorithmName}: {stopwatch.Elapsed.TotalMilliseconds} ms");
     }
 
-    static double MeasureDuration(int[] array, SortingMethodDelegate sortingMethod)
+
+    static async Task RunSearchComparison(bool useAsync)
     {
-        Stopwatch stopwatch = new Stopwatch();
-        stopwatch.Start();
-        sortingMethod(array);
-        stopwatch.Stop();
-        return stopwatch.Elapsed.TotalMilliseconds;
+        // Prepare a random array
+        int[] array = Algo.Prepare(10000000); // Adjust the array size as needed
+
+        // Define targets for best, average, and worst case scenarios
+        int bestCaseTarget = array[0]; // First element
+        int averageCaseTarget = array[array.Length / 2]; // Middle element
+        int worstCaseTarget = array[array.Length - 1]; // Last element
+
+        // Perform Linear Search without sorting
+        if (useAsync)
+        {
+            await Algo.DisplayRunningTime(array, arr => Algo.LinearSearch(arr, bestCaseTarget), "Linear Search - Best Case");
+            await Algo.DisplayRunningTime(array, arr => Algo.LinearSearch(arr, averageCaseTarget), "Linear Search - Average Case");
+            await Algo.DisplayRunningTime(array, arr => Algo.LinearSearch(arr, worstCaseTarget), "Linear Search - Worst Case");
+        }
+        else
+        {
+            Algo.DisplayRunningTime(array, arr => Algo.LinearSearch(arr, bestCaseTarget), "Linear Search - Best Case").GetAwaiter().GetResult(); ;
+            Algo.DisplayRunningTime(array, arr => Algo.LinearSearch(arr, averageCaseTarget), "Linear Search - Average Case").GetAwaiter().GetResult(); ;
+            Algo.DisplayRunningTime(array, arr => Algo.LinearSearch(arr, worstCaseTarget), "Linear Search - Worst Case").GetAwaiter().GetResult(); ;
+        }
+
+        // Sort the array once for Binary and Lambda Search
+        int[] sortedArray = (int[])array.Clone();
+        Algo.MergeSort(sortedArray);
+
+        // Perform Binary and Lambda Search
+        if (useAsync)
+        {
+            await Algo.DisplayRunningTime(sortedArray, arr => Algo.BinarySearch(arr, bestCaseTarget), "Binary Search - Best Case");
+            await Algo.DisplayRunningTime(sortedArray, arr => Algo.BinarySearch(arr, averageCaseTarget), "Binary Search - Average Case");
+            await Algo.DisplayRunningTime(sortedArray, arr => Algo.BinarySearch(arr, worstCaseTarget), "Binary Search - Worst Case");
+            await Algo.DisplayRunningTime(sortedArray, arr => Algo.LambdaSearch(arr, bestCaseTarget), "Lambda Search - Best Case");
+            await Algo.DisplayRunningTime(sortedArray, arr => Algo.LambdaSearch(arr, averageCaseTarget), "Lambda Search - Average Case");
+            await Algo.DisplayRunningTime(sortedArray, arr => Algo.LambdaSearch(arr, worstCaseTarget), "Lambda Search - Worst Case");
+        }
+        else
+        {
+            Algo.DisplayRunningTime(sortedArray, arr => Algo.BinarySearch(arr, bestCaseTarget), "Binary Search - Best Case").GetAwaiter().GetResult(); ;
+            Algo.DisplayRunningTime(sortedArray, arr => Algo.BinarySearch(arr, averageCaseTarget), "Binary Search - Average Case").GetAwaiter().GetResult(); ;
+            Algo.DisplayRunningTime(sortedArray, arr => Algo.BinarySearch(arr, worstCaseTarget), "Binary Search - Worst Case").GetAwaiter().GetResult(); ;
+            Algo.DisplayRunningTime(sortedArray, arr => Algo.LambdaSearch(arr, bestCaseTarget), "Lambda Search - Best Case").GetAwaiter().GetResult(); ;
+            Algo.DisplayRunningTime(sortedArray, arr => Algo.LambdaSearch(arr, averageCaseTarget), "Lambda Search - Average Case").GetAwaiter().GetResult(); ;
+            Algo.DisplayRunningTime(sortedArray, arr => Algo.LambdaSearch(arr, worstCaseTarget), "Lambda Search - Worst Case").GetAwaiter().GetResult(); ;
+        }
     }
 
-    static async Task DisplayRunningTime(int[] array, Func<int[], object, int> operation, object parameter = null)
+    public static List<Employee> FilterEmployeesByName(List<Employee> employees)
     {
-        string resultText = "";
-        Stopwatch stopwatch = new Stopwatch();
-        stopwatch.Start();
-
-        int result = useAsync ? await Task.Run(() => operation(array, parameter)) : operation(array, parameter);
-
-        resultText = result >= 0 ? $"Operation result: {result}" : "Operation completed";
-        stopwatch.Stop();
-        Console.WriteLine($"{resultText}. Elapsed Time: {stopwatch.Elapsed.TotalMilliseconds} ms");
+        return employees.Where(employee => employee.Name.Contains("an")).ToList();
     }
 
-    static void PerformEmployeeOperations()
+    public static List<string> MapEmployeesToNames(List<Employee> employees)
     {
-        List<Employee> allEmployees = new List<Employee>();
-        Console.WriteLine("Please enter the path to the Employees.txt file:");
-        string filePath = Console.ReadLine();
+        return employees.Select(employee => employee.Name).ToList();
+    }
+
+    public static int ReduceTotalYearsOfExperience(List<Employee> employees)
+    {
+        return employees.Sum(employee => employee.YearsOfExperience);
+    }
+
+    public static List<Employee> ParseEmployeeFile(string filePath)
+    {
+        var employees = new List<Employee>();
+        var lines = File.ReadAllLines(filePath);
+
+        foreach (var line in lines)
+        {
+            var parts = line.Split('|');
+            if (parts.Length == 3)
+            {
+                employees.Add(new Employee
+                {
+                    Name = parts[0].Trim(),
+                    Department = parts[1].Trim(),
+                    YearsOfExperience = int.Parse(parts[2].Trim())
+                });
+            }
+        }
+
+        return employees;
+    }
+
+    static Task ProcessEmployeesFile()
+    {
+        // Assuming the file path is known
+        string filePath = @"..\..\..\Employees.txt"; // Change this to the actual file path
+
         try
         {
-             allEmployees = File.ReadAllLines(filePath)
-                                                     .Select(record => record.Split('|'))
-                                                     .Select(fields => new Employee
-                                                     {
-                                                         Name = fields[0],
-                                                         Department = fields[1],
-                                                         YearsOfExperience = int.Parse(fields[2])
-                                                     })
-                                                     .ToList();
-        }catch (Exception)
-        {
-            Console.WriteLine("Invalid file path or file not found.");
-        }
-       
+            var employees = ParseEmployeeFile(filePath);
+            var filteredEmployees = FilterEmployeesByName(employees);
+            var employeeNames = MapEmployeesToNames(employees);
+            var totalExperience = ReduceTotalYearsOfExperience(employees);
 
-        // Find employees with 'an' in their names
-        var employeesWithAn = allEmployees.Where(emp => emp.Name.Contains("an")).ToList();
-        Console.WriteLine("\nEmployees with 'an' in their names:");
-        foreach (var emp in employeesWithAn)
-        {
-            Console.WriteLine(emp.Name);
-        }
+            Console.WriteLine("Filtered Employees (contain 'an' in name):");
+            foreach (var emp in filteredEmployees)
+            {
+                Console.WriteLine(emp.Name);
+            }
 
-        // Extract names from employee records
-        var listOfNames = allEmployees.Select(emp => emp.Name).ToList();
-        Console.WriteLine("\nList of Employee Names:");
-        foreach (var individualName in listOfNames)
+            Console.WriteLine("\nEmployee Names:");
+            foreach (var name in employeeNames)
+            {
+                Console.WriteLine(name);
+            }
+
+            Console.WriteLine($"\nTotal Years of Experience: {totalExperience}");
+        }
+        catch (Exception ex)
         {
-            Console.WriteLine(individualName);
+            Console.WriteLine($"Error processing file: {ex.Message}");
         }
 
-        // Sum up the total years of experience
-        var experienceSum = allEmployees.Sum(emp => emp.YearsOfExperience);
-        Console.WriteLine($"\nCombined Total Years of Experience: {experienceSum}");
+        return Task.CompletedTask;
     }
-
-
-
 }

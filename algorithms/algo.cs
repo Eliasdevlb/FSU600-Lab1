@@ -1,17 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿
+using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace algorithms
 {
-
     public delegate void SortingMethodDelegate(int[] array);
 
     public delegate int SearchMethodDelegate(int[] array, int target);
 
-    public class algo
+    public class Algo
     {
         public static void Swap(int[] myArray, int m, int n)
         {
@@ -26,7 +24,7 @@ namespace algorithms
             int size = array.Length;
             for (int i = 0; i < size; i++)
             {
-                array[i] = rand.Next(0, 10 * size + 1); 
+                array[i] = rand.Next(0, 10 * size);
             }
         }
 
@@ -69,8 +67,6 @@ namespace algorithms
             }
         }
 
-
-
         public static void BubbleSort(int[] array)
         {
             for (int i = 0; i < array.Length - 1; i++)
@@ -84,7 +80,6 @@ namespace algorithms
                 }
             }
         }
-
 
         public static void MergeSort(int[] array)
         {
@@ -189,10 +184,10 @@ namespace algorithms
             {
                 if (array[i] == target)
                 {
-                    return i; 
+                    return i;
                 }
             }
-            return -1; 
+            return -1;
         }
 
         public static int BinarySearch(int[] array, int target)
@@ -218,6 +213,32 @@ namespace algorithms
                 }
             }
             return -1;
+        }
+
+        public static int LambdaSearch(int[] array, int target)
+        {
+            return Array.FindIndex(array, item => item == target);
+        }
+
+        public static async Task DisplayRunningTime<T>(int[] array, Func<int[], T> method, string description)
+        {
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+            T result = await Task.Run(() => method(array));
+
+            stopwatch.Stop();
+            double elapsedMilliseconds = stopwatch.Elapsed.TotalMilliseconds;
+
+            // Check if the result is of type int, and adjust the output accordingly
+            if (typeof(T) == typeof(int))
+            {
+                Console.WriteLine($"{description}: {elapsedMilliseconds} ms. Result: {result}");
+            }
+            else
+            {
+                Console.WriteLine($"{description}: {elapsedMilliseconds} ms");
+            }
         }
 
 
