@@ -248,7 +248,7 @@ class Program
     static async Task RunAutomatedSearchPerformanceTest(bool useAsync)
     {
         // Prepare a random array
-        int[] array = Algo.Prepare(10000000); // Adjust the array size as needed
+        int[] array = Algo.Prepare(10000000);
 
         // Define targets for best, average, and worst case scenarios
         int bestCaseTarget = array[0]; // First element
