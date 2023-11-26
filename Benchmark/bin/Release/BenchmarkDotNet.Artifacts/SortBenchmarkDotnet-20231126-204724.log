@@ -1,0 +1,74 @@
+// Validating benchmarks:
+// ***** BenchmarkRunner: Start   *****
+// ***** Found 24 benchmark(s) in total *****
+// ***** Building 1 exe(s) in Parallel: Start   *****
+BuildScript: C:\Users\R\source\repos\FUS600-LAB1\Benchmark\bin\Release\6f54536b-aa43-416f-b274-6e715c2e9c11.bat
+// ***** Done, took 00:00:01 (1.84 sec)   *****
+// Found 24 benchmarks:
+//   SortBenchmarkDotnet.BubbleSortBenchmark: DefaultJob [N=100]
+//   SortBenchmarkDotnet.InsertionSortBenchmark: DefaultJob [N=100]
+//   SortBenchmarkDotnet.SelectionSortBenchmark: DefaultJob [N=100]
+//   SortBenchmarkDotnet.MergeSortBenchmark: DefaultJob [N=100]
+//   SortBenchmarkDotnet.QuickSortBenchmark: DefaultJob [N=100]
+//   SortBenchmarkDotnet.SortByLambdaBenchmark: DefaultJob [N=100]
+//   SortBenchmarkDotnet.BubbleSortBenchmark: DefaultJob [N=5000]
+//   SortBenchmarkDotnet.InsertionSortBenchmark: DefaultJob [N=5000]
+//   SortBenchmarkDotnet.SelectionSortBenchmark: DefaultJob [N=5000]
+//   SortBenchmarkDotnet.MergeSortBenchmark: DefaultJob [N=5000]
+//   SortBenchmarkDotnet.QuickSortBenchmark: DefaultJob [N=5000]
+//   SortBenchmarkDotnet.SortByLambdaBenchmark: DefaultJob [N=5000]
+//   SortBenchmarkDotnet.BubbleSortBenchmark: DefaultJob [N=100000]
+//   SortBenchmarkDotnet.InsertionSortBenchmark: DefaultJob [N=100000]
+//   SortBenchmarkDotnet.SelectionSortBenchmark: DefaultJob [N=100000]
+//   SortBenchmarkDotnet.MergeSortBenchmark: DefaultJob [N=100000]
+//   SortBenchmarkDotnet.QuickSortBenchmark: DefaultJob [N=100000]
+//   SortBenchmarkDotnet.SortByLambdaBenchmark: DefaultJob [N=100000]
+//   SortBenchmarkDotnet.BubbleSortBenchmark: DefaultJob [N=1000000]
+//   SortBenchmarkDotnet.InsertionSortBenchmark: DefaultJob [N=1000000]
+//   SortBenchmarkDotnet.SelectionSortBenchmark: DefaultJob [N=1000000]
+//   SortBenchmarkDotnet.MergeSortBenchmark: DefaultJob [N=1000000]
+//   SortBenchmarkDotnet.QuickSortBenchmark: DefaultJob [N=1000000]
+//   SortBenchmarkDotnet.SortByLambdaBenchmark: DefaultJob [N=1000000]
+
+Setup power plan (GUID: 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c FriendlyName: High performance)
+// **************************
+// Benchmark: SortBenchmarkDotnet.BubbleSortBenchmark: DefaultJob [N=100]
+// *** Execute ***
+// Launch: 1 / 1
+// Execute: C:\Users\R\source\repos\FUS600-LAB1\Benchmark\bin\Release\6f54536b-aa43-416f-b274-6e715c2e9c11.exe --anonymousPipes 1916 1912 --benchmarkName "SortBenchmarkDotnet.BubbleSortBenchmark(N: 100)" --job Default --benchmarkId 0 in 
+// BeforeAnythingElse
+
+// Benchmark Process Environment Information:
+// BenchmarkDotNet v0.13.10
+// Runtime=.NET Framework 4.8.1 (4.8.9195.0), X86 LegacyJIT
+// GC=Concurrent Workstation
+// HardwareIntrinsics= 
+// Job: DefaultJob
+
+OverheadJitting  1: 1 op, 153300.00 ns, 153.3000 us/op
+WorkloadJitting  1: 1 op, 243300.00 ns, 243.3000 us/op
+
+OverheadJitting  2: 16 op, 290400.00 ns, 18.1500 us/op
+WorkloadJitting  2: 16 op, 332600.00 ns, 20.7875 us/op
+
+WorkloadPilot    1: 16 op, 64200.00 ns, 4.0125 us/op
+WorkloadPilot    2: 32 op, 120700.00 ns, 3.7719 us/op
+WorkloadPilot    3: 64 op, 210600.00 ns, 3.2906 us/op
+WorkloadPilot    4: 128 op, 416200.00 ns, 3.2516 us/op
+WorkloadPilot    5: 256 op, 839300.00 ns, 3.2785 us/op
+WorkloadPilot    6: 512 op, 1655000.00 ns, 3.2324 us/op
+WorkloadPilot    7: 1024 op, 3243700.00 ns, 3.1677 us/op
+WorkloadPilot    8: 2048 op, 6472500.00 ns, 3.1604 us/op
+WorkloadPilot    9: 4096 op, 13240800.00 ns, 3.2326 us/op
+WorkloadPilot   10: 8192 op, 26333300.00 ns, 3.2145 us/op
+WorkloadPilot   11: 16384 op, 53080400.00 ns, 3.2398 us/op
+WorkloadPilot   12: 32768 op, 105859400.00 ns, 3.2306 us/op
+WorkloadPilot   13: 65536 op, 212746800.00 ns, 3.2463 us/op
+WorkloadPilot   14: 131072 op, 426669800.00 ns, 3.2552 us/op
+WorkloadPilot   15: 262144 op, 859141600.00 ns, 3.2774 us/op
+
+OverheadWarmup   1: 262144 op, 545600.00 ns, 2.0813 ns/op
+OverheadWarmup   2: 262144 op, 548700.00 ns, 2.0931 ns/op
+OverheadWarmup   3: 262144 op, 551900.00 ns, 2.1053 ns/op
+OverheadWarmup   4: 262144 op, 551300.00 ns, 2.1030 ns/op
+OverheadWarmup   5: 262144

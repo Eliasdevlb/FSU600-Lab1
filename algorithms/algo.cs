@@ -1,13 +1,14 @@
 ﻿
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 
-namespace algorithms
-{
-    public delegate void SortingMethodDelegate(int[] array);
 
-    public delegate int SearchMethodDelegate(int[] array, int target);
+namespace Algorithms
+{
+    public delegate int[] SortingAlgorithmDelegate(int[] array);
+    public delegate int SearchAlgorithmDelegate(int[] array, int target);
 
     public class Algo
     {
@@ -28,6 +29,7 @@ namespace algorithms
             }
         }
 
+
         public static int[] Prepare(int n)
         {
             int[] array = new int[n];
@@ -35,139 +37,140 @@ namespace algorithms
             return array;
         }
 
-        public static void InsertionSort(int[] array)
+        public static int[] InsertionSort(int[] array)
         {
-            for (int i = 1; i < array.Length; i++)
+            int[] result = (int[])array.Clone();
+            for (int i = 1; i < result.Length; i++)
             {
-                int key = array[i];
+                int key = result[i];
                 int j = i - 1;
-
-                while (j >= 0 && array[j] > key)
+                while (j >= 0 && result[j] > key)
                 {
-                    array[j + 1] = array[j];
-                    j = j - 1;
+                    result[j + 1] = result[j];
+                    j--;
                 }
-                array[j + 1] = key;
+                result[j + 1] = key;
             }
+            return result;
         }
 
-        public static void SelectionSort(int[] array)
+
+        public static int[] SelectionSort(int[] array)
         {
-            for (int i = 0; i < array.Length - 1; i++)
+            int[] result = (int[])array.Clone();
+            for (int i = 0; i < result.Length - 1; i++)
             {
                 int minIndex = i;
-                for (int j = i + 1; j < array.Length; j++)
+                for (int j = i + 1; j < result.Length; j++)
                 {
-                    if (array[j] < array[minIndex])
+                    if (result[j] < result[minIndex])
                     {
                         minIndex = j;
                     }
                 }
-                Swap(array, i, minIndex);
+                int temp = result[minIndex];
+                result[minIndex] = result[i];
+                result[i] = temp;
             }
+            return result;
         }
 
-        public static void BubbleSort(int[] array)
+
+        public static int[] BubbleSort(int[] array)
         {
-            for (int i = 0; i < array.Length - 1; i++)
+            int[] result = (int[])array.Clone();
+            for (int i = 0; i < result.Length - 1; i++)
             {
-                for (int j = 0; j < array.Length - i - 1; j++)
+                for (int j = 0; j < result.Length - i - 1; j++)
                 {
-                    if (array[j] > array[j + 1])
+                    if (result[j] > result[j + 1])
                     {
-                        Swap(array, j, j + 1);
+                        int temp = result[j];
+                        result[j] = result[j + 1];
+                        result[j + 1] = temp;
                     }
                 }
             }
+            return result;
         }
 
-        public static void MergeSort(int[] array)
+
+        public static int[] MergeSort(int[] array)
         {
             if (array.Length <= 1)
-                return;
+                return array;
 
             int mid = array.Length / 2;
-            int[] left = new int[mid];
-            int[] right = new int[array.Length - mid];
+            int[] left = MergeSort(array.Take(mid).ToArray());
+            int[] right = MergeSort(array.Skip(mid).ToArray());
 
-            for (int i = 0; i < mid; i++)
-                left[i] = array[i];
-            for (int i = mid; i < array.Length; i++)
-                right[i - mid] = array[i];
-
-            MergeSort(left);
-            MergeSort(right);
-
-            Merge(array, left, right);
+            return Merge(left, right);
         }
 
-        public static void Merge(int[] array, int[] left, int[] right)
+        private static int[] Merge(int[] left, int[] right)
         {
-            int leftIndex = 0, rightIndex = 0, arrayIndex = 0;
-
-            while (leftIndex < left.Length && rightIndex < right.Length)
+            int[] result = new int[left.Length + right.Length];
+            int i = 0, j = 0, k = 0;
+            while (i < left.Length && j < right.Length)
             {
-                if (left[leftIndex] < right[rightIndex])
+                if (left[i] < right[j])
                 {
-                    array[arrayIndex] = left[leftIndex];
-                    leftIndex++;
+                    result[k++] = left[i++];
                 }
                 else
                 {
-                    array[arrayIndex] = right[rightIndex];
-                    rightIndex++;
+                    result[k++] = right[j++];
                 }
-                arrayIndex++;
             }
-
-            while (leftIndex < left.Length)
+            while (i < left.Length)
             {
-                array[arrayIndex] = left[leftIndex];
-                leftIndex++;
-                arrayIndex++;
+                result[k++] = left[i++];
             }
-
-            while (rightIndex < right.Length)
+            while (j < right.Length)
             {
-                array[arrayIndex] = right[rightIndex];
-                rightIndex++;
-                arrayIndex++;
+                result[k++] = right[j++];
             }
+            return result;
         }
 
-        public static void QuickSort(int[] array)
+
+        public static int[] QuickSort(int[] array)
         {
-            QuickSort(array, 0, array.Length - 1);
+            int[] result = (int[])array.Clone();
+            QuickSortRecursive(result, 0, result.Length - 1);
+            return result;
         }
 
-        public static void QuickSort(int[] array, int low, int high)
+        private static void QuickSortRecursive(int[] array, int low, int high)
         {
             if (low < high)
             {
-                int pivotIndex = Partition(array, low, high);
-
-                QuickSort(array, low, pivotIndex - 1);
-                QuickSort(array, pivotIndex + 1, high);
+                int pivot = Partition(array, low, high);
+                QuickSortRecursive(array, low, pivot - 1);
+                QuickSortRecursive(array, pivot + 1, high);
             }
         }
 
-        public static int Partition(int[] array, int low, int high)
+        private static int Partition(int[] array, int low, int high)
         {
             int pivot = array[high];
             int i = (low - 1);
-
             for (int j = low; j < high; j++)
             {
                 if (array[j] < pivot)
                 {
                     i++;
-                    Swap(array, i, j);
+                    int temp = array[i];
+                    array[i] = array[j];
+                    array[j] = temp;
                 }
             }
-
-            Swap(array, i + 1, high);
+            int temp1 = array[i + 1];
+            array[i + 1] = array[high];
+            array[high] = temp1;
             return i + 1;
         }
+
 
         public static int[] SortByLambda(int[] array)
         {
@@ -189,7 +192,6 @@ namespace algorithms
             }
             return -1;
         }
-
         public static int BinarySearch(int[] array, int target)
         {
             int left = 0;
@@ -220,27 +222,35 @@ namespace algorithms
             return Array.FindIndex(array, item => item == target);
         }
 
-        public static async Task DisplayRunningTime<T>(int[] array, Func<int[], T> method, string description)
+        public static async Task DisplayRunningTime(int[] array, Delegate algorithmMethod, string description, bool useAsync, int? target = null)
         {
             Stopwatch stopwatch = new Stopwatch();
-            stopwatch.Start();
 
-            T result = await Task.Run(() => method(array));
-
-            stopwatch.Stop();
-            double elapsedMilliseconds = stopwatch.Elapsed.TotalMilliseconds;
-
-            // Check if the result is of type int, and adjust the output accordingly
-            if (typeof(T) == typeof(int))
+            Action executeAlgorithm = () =>
             {
-                Console.WriteLine($"{description}: {elapsedMilliseconds} ms. Result: {result}");
+                if (algorithmMethod is SortingAlgorithmDelegate sortingMethod)
+                {
+                    sortingMethod(array); // Invoke sorting algorithm
+                }
+                else if (algorithmMethod is SearchAlgorithmDelegate searchMethod && target.HasValue)
+                {
+                    searchMethod(array, target.Value); // Invoke search algorithm
+                }
+            };
+
+            stopwatch.Start();
+            if (useAsync)
+            {
+                await Task.Run(executeAlgorithm);
             }
             else
             {
-                Console.WriteLine($"{description}: {elapsedMilliseconds} ms");
+                executeAlgorithm();
             }
-        }
+            stopwatch.Stop();
 
+            Console.WriteLine($"{description}: Running time is {stopwatch.Elapsed.TotalMilliseconds} ms");
+        }
 
     }
 }

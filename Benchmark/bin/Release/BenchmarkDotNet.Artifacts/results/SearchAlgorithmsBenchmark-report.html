@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8' />
+<title>SearchAlgorithmsBenchmark-20231126-172827</title>
+
+<style type="text/css">
+	table { border-collapse: collapse; display: block; width: 100%; overflow: auto; }
+	td, th { padding: 6px 13px; border: 1px solid #ddd; text-align: right; }
+	tr { background-color: #fff; border-top: 1px solid #ccc; }
+	tr:nth-child(even) { background: #f8f8f8; }
+</style>
+</head>
+<body>
+<pre><code>
+BenchmarkDotNet v0.13.10, Windows 10 (10.0.19045.3693/22H2/2022Update)
+13th Gen Intel Core i5-13600KF, 1 CPU, 20 logical and 14 physical cores
+  [Host]     : .NET Framework 4.8.1 (4.8.9195.0), X86 LegacyJIT [AttachedDebugger]
+  DefaultJob : .NET Framework 4.8.1 (4.8.9195.0), X86 LegacyJIT
+</code></pre>
+<pre><code></code></pre>
+
+<table>
+<thead><tr><th>Method           </th><th>N</th><th>Mean    </th><th>Error  </th><th>StdDev </th><th>Median  </th>
+</tr>
+</thead><tbody><tr><td>LinearSearchBestCase</td><td>100000</td><td>0.8694 ns</td><td>0.0094 ns</td><td>0.0079 ns</td><td>0.8695 ns</td>
+</tr><tr><td>LinearSearchAverageCase</td><td>100000</td><td>24,889.8541 ns</td><td>1,783.1138 ns</td><td>5,201.4267 ns</td><td>26,702.5658 ns</td>
+</tr><tr><td>LinearSearchWorstCase</td><td>100000</td><td>51,944.3847 ns</td><td>2,367.4054 ns</td><td>6,792.5298 ns</td><td>53,394.7571 ns</td>
+</tr><tr><td>BinarySearchBestCase</td><td>100000</td><td>23.5355 ns</td><td>0.4793 ns</td><td>0.5129 ns</td><td>23.6460 ns</td>
+</tr><tr><td>BinarySearchAverageCase</td><td>100000</td><td>23.5920 ns</td><td>0.2053 ns</td><td>0.1820 ns</td><td>23.6413 ns</td>
+</tr><tr><td>BinarySearchWorstCase</td><td>100000</td><td>23.0946 ns</td><td>0.0544 ns</td><td>0.0509 ns</td><td>23.0633 ns</td>
+</tr><tr><td>LambdaSearchBestCase</td><td>100000</td><td>6.6493 ns</td><td>0.0403 ns</td><td>0.0315 ns</td><td>6.6324 ns</td>
+</tr><tr><td>LambdaSearchAverageCase</td><td>100000</td><td>78,378.9555 ns</td><td>102.4701 ns</td><td>95.8506 ns</td><td>78,361.6455 ns</td>
+</tr><tr><td>LambdaSearchWorstCase</td><td>100000</td><td>89,916.9582 ns</td><td>1,759.1390 ns</td><td>4,755.9347 ns</td><td>90,943.9209 ns</td>
+</tr></tbody></table>
+</body>
+</html>
